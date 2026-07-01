@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TONTONANKU — Katalog Anime & Donghua</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0E14;
+    --panel:#13172238;
+    --panel-solid:#151A28;
+    --line:#252B3D;
+    --text:#EDEAE0;
+    --muted:#8B91A8;
+    --amber:#FF6B35;   /* aksen ANIME */
+    --jade:#2DD4BF;    /* aksen DONGHUA */
+    --gold:#E8B45A;
+
+    --display:'Anton', sans-serif;
+    --body:'Plus Jakarta Sans', sans-serif;
+    --mono:'JetBrains Mono', monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--body);
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+
+  ::selection{background:var(--amber); color:#0B0E14;}
+
+  /* ---------- NAVBAR ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px clamp(16px,5vw,48px);
+    background:linear-gradient(to bottom, rgba(11,14,20,0.95), rgba(11,14,20,0));
+    backdrop-filter:blur(2px);
+  }
+  .header-left{display:flex; align-items:center; gap:14px;}
+  .hamburger{
+    width:36px; height:36px; border-radius:8px;
+    background:transparent; border:1px solid var(--line);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .hamburger svg{width:18px; height:18px;}
+  .hamburger:hover{background:var(--panel-solid);}
+  .logo{
+    font-family:var(--display);
+    font-size:22px;
+    letter-spacing:0.5px;
+    display:flex; align-items:baseline; gap:6px;
+  }
+  .logo span{color:var(--amber);}
+  nav{display:flex; gap:28px; font-size:14px; font-weight:600;}
+  nav a{
+    color:var(--muted);
+    position:relative;
+    padding-bottom:4px;
+    transition:color .2s;
+  }
+  nav a:hover{color:var(--text);}
+  nav a:focus-visible{outline:2px solid var(--gold); outline-offset:4px; border-radius:2px;}
+  .search-icon-btn{
+    width:36px; height:36px; border-radius:8px;
+    background:transparent; border:1px solid var(--line);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; margin-left:6px;
+  }
+  .search-icon-btn svg{width:16px; height:16px;}
+  .search-icon-btn:hover{background:var(--panel-solid);}
+  @media (max-width:640px){
+    nav a{display:none;}
+    .search-icon-btn{display:flex; margin-left:auto;}
+  }
+
+  /* ---------- NAV DRAWER ---------- */
+  .drawer-overlay{
+    position:fixed; inset:0; z-index:400;
+    background:rgba(5,6,10,.65);
+    display:none; opacity:0; transition:opacity .25s;
+  }
+  .drawer-overlay.open{display:block; opacity:1;}
+  .drawer{
+    position:fixed; top:0; left:0; bottom:0; z-index:401;
+    width:min(300px,82vw);
+    background:var(--panel-solid);
+    border-right:1px solid var(--line);
+    padding:20px;
+    transform:translateX(-100%);
+    transition:transform .3s cubic-bezier(.32,.72,0,1);
+    display:flex; flex-direction:column;
+  }
+  .drawer-overlay.open .drawer{transform:translateX(0);}
+  .drawer-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+  .drawer-head span{font-family:var(--mono); font-size:11px; letter-spacing:2px; color:var(--muted);}
+  .drawer-close{
+    width:30px; height:30px; border-radius:50%; border:none; background:transparent;
+    color:var(--muted); font-size:18px; cursor:pointer;
+  }
+  .drawer-close:hover{color:var(--text);}
+  .drawer-search{position:relative; margin-bottom:18px;}
+  .drawer-search svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--muted);}
+  .drawer-search input{
+    width:100%; background:var(--ink); border:1px solid var(--line); border-radius:9px;
+    padding:11px 14px 11px 34px; color:var(--text); font-family:var(--body); font-size:13px;
+  }
+  .drawer-search input:focus{outline:none; border-color:var(--gold);}
+  .drawer-menu{display:flex; flex-direction:column; gap:4px;}
+  .drawer-menu a, .drawer-menu button{
+    display:flex; align-items:center; gap:12px;
+    padding:11px 12px; border-radius:8px;
+    color:var(--muted); font-weight:600; font-size:14px;
+    background:transparent; border:none; text-align:left; cursor:pointer;
+    width:100%;
+  }
+  .drawer-menu a:hover, .drawer-menu button:hover{background:rgba(255,255,255,.05); color:var(--text);}
+  .drawer-menu svg{width:17px; height:17px; flex:0 0 auto;}
+
+  /* ---------- GENRES PAGE ---------- */
+  .page-overlay{
+    position:fixed; inset:0; z-index:350;
+    background:var(--ink);
+    display:none;
+    transform:translateX(100%);
+    transition:transform .3s cubic-bezier(.32,.72,0,1);
+    overflow-y:auto;
+  }
+  .page-overlay.open{display:block; transform:translateX(0);}
+  .page-head{
+    position:sticky; top:0; z-index:2;
+    display:flex; align-items:center; gap:14px;
+    padding:18px clamp(16px,5vw,48px);
+    background:linear-gradient(to bottom, var(--ink) 70%, rgba(11,14,20,0));
+  }
+  .page-back{
+    width:38px; height:38px; border-radius:50%;
+    background:var(--panel-solid); border:1px solid var(--line);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:18px; flex:0 0 auto;
+  }
+  .page-title{font-family:var(--display); font-size:22px; text-transform:uppercase; letter-spacing:1px;}
+  .page-body{padding:4px clamp(16px,5vw,48px) 60px;}
+  .page-sub{color:var(--muted); font-size:14px; margin-bottom:18px; max-width:520px;}
+  .genre-search-wrap{position:relative; max-width:420px; margin-bottom:26px;}
+  .genre-search-wrap svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--muted);}
+  #genreSearchInput{
+    width:100%; background:var(--panel-solid); border:1px solid var(--line); border-radius:10px;
+    padding:13px 14px 13px 38px; color:var(--text); font-family:var(--body); font-size:14px;
+  }
+  #genreSearchInput:focus{outline:none; border-color:var(--gold);}
+  .genre-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(160px,1fr));
+    gap:14px;
+  }
+  .genre-card{
+    background:var(--panel-solid); border:1px solid var(--line); border-radius:12px;
+    padding:18px; cursor:pointer; transition:border-color .2s, transform .2s;
+  }
+  .genre-card:hover{border-color:var(--gold); transform:translateY(-2px);}
+  .genre-card-name{font-weight:700; font-size:15px; margin-bottom:6px;}
+  .genre-card-count{
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+    display:flex; align-items:center; gap:6px;
+  }
+  .genre-card-count .dot{width:5px; height:5px; border-radius:50%; background:var(--jade);}
+  .genre-empty{font-family:var(--mono); font-size:13px; color:var(--muted); padding:20px 0;}
+
+  .hero{
+    position:relative;
+    height:min(86vh, 640px);
+    min-height:480px;
+    overflow:hidden;
+    background:var(--ink); /* never looks empty, even before bg image loads / if poster missing */
+  }
+  .slides{
+    display:flex;
+    height:100%;
+    transition:transform .55s cubic-bezier(.65,0,.35,1);
+    touch-action: pan-y;
+  }
+  .slide{
+    position:relative;
+    flex:0 0 100%;
+    height:100%;
+    overflow:hidden;
+    user-select:none;
+  }
+  /* background dibangun dari "poster" (portrait) yang di-zoom + di-cover
+     biar nutup seluruh lebar hero tanpa keliatan kosong/terpotong aneh */
+  .hero-bg{
+    position:absolute;
+    inset:-4%;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    transform:scale(1.6);
+    filter:blur(1.5px) saturate(1.08) brightness(.92);
+    transition:transform 9s ease-out;
+  }
+  .slide.active .hero-bg{transform:scale(1.72);}
+  .hero-overlay{
+    position:absolute; inset:0; z-index:1;
+    background:
+      linear-gradient(to top, var(--ink) 0%, rgba(11,14,20,.82) 24%, rgba(11,14,20,.38) 52%, rgba(11,14,20,.32) 75%, rgba(11,14,20,.55) 100%),
+      linear-gradient(to right, rgba(5,6,10,.78) 0%, rgba(5,6,10,.15) 32%, rgba(5,6,10,0) 55%, rgba(5,6,10,.2) 80%, rgba(5,6,10,.7) 100%),
+      rgba(8,10,16,.18);
+  }
+  .hero-content{
+    position:relative; z-index:2;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:clamp(20px,4vw,48px);
+    padding:clamp(28px,6vw,72px);
+  }
+  .hero-info{flex:1 1 560px; max-width:620px; min-width:0;}
+  .kicker{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:2px;
+    padding:5px 10px;
+    border:1px solid currentColor;
+    border-radius:3px;
+    display:inline-block;
+    margin-bottom:14px;
+  }
+  .kicker.k-anime{color:var(--amber);}
+  .kicker.k-donghua{color:var(--jade);}
+  .slide-title{
+    font-family:var(--display);
+    font-size:clamp(30px,5.4vw,54px);
+    line-height:1.02;
+    text-transform:uppercase;
+    margin-bottom:14px;
+    text-shadow:0 4px 24px rgba(0,0,0,.5);
+  }
+  .slide-meta{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    font-family:var(--mono); font-size:13px; color:var(--muted);
+    margin-bottom:14px;
+  }
+  .ep-badge{
+    font-family:var(--mono);
+    font-size:13px; font-weight:700;
+    padding:5px 12px; border-radius:20px;
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--line);
+  }
+  .ep-badge .dot{width:6px; height:6px; border-radius:50%; background:var(--jade); animation:pulse 1.6s infinite;}
+  .ep-badge.end .dot{background:var(--muted); animation:none;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .hero-genres{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+  .hero-genre-chip{
+    font-family:var(--mono); font-size:11px; letter-spacing:.5px;
+    padding:4px 11px; border-radius:20px;
+    border:1px solid rgba(255,255,255,.2); color:var(--text); opacity:.8;
+    background:rgba(255,255,255,.05);
+    white-space:nowrap;
+  }
+  .hero-synopsis{
+    font-size:14px; line-height:1.65; color:var(--text); opacity:.82;
+    margin-bottom:24px; max-width:540px;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .hero-actions{display:flex; flex-wrap:wrap; gap:12px;}
+  .hero-btn{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:13px 26px; border-radius:10px;
+    font-family:var(--body); font-weight:700; font-size:14px;
+    cursor:pointer; border:none; transition:background .2s, transform .15s, border-color .2s;
+  }
+  .hero-btn svg{width:17px; height:17px;}
+  .hero-btn.primary{background:var(--text); color:var(--ink);}
+  .hero-btn.primary:hover{background:var(--gold); transform:translateY(-1px);}
+  .hero-btn.secondary{
+    background:rgba(255,255,255,.08); color:var(--text);
+    border:1px solid rgba(255,255,255,.28);
+    backdrop-filter:blur(8px);
+  }
+  .hero-btn.secondary:hover{background:rgba(255,255,255,.16); transform:translateY(-1px);}
+
+  /* ---- poster card kanan (Netflix/Crunchyroll-style) ---- */
+  .hero-poster-wrap{flex:0 0 auto; display:flex; align-items:center;}
+  .hero-poster-card{
+    position:relative;
+    width:clamp(150px,15vw,220px);
+    aspect-ratio:2/3;
+    border-radius:16px;
+    overflow:hidden;
+    background-size:cover; background-position:center;
+    box-shadow:0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.08);
+    transition:transform .35s cubic-bezier(.32,.72,0,1), box-shadow .35s;
+  }
+  .hero-poster-card:hover{
+    transform:translateY(-6px) scale(1.03);
+    box-shadow:0 26px 64px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.16);
+  }
+  .hero-poster-card .detail-glyph{font-size:40px;}
+
+  @media (max-width:860px){
+    .hero-poster-card{width:clamp(120px,18vw,170px);}
+    .hero-synopsis{-webkit-line-clamp:2;}
+  }
+  @media (max-width:640px){
+    .hero{height:min(78vh,560px); min-height:440px;}
+    .hero-content{
+      flex-direction:column; justify-content:flex-end;
+      align-items:flex-start; padding-bottom:30px;
+    }
+    .hero-poster-wrap{display:none;}
+    .hero-info{max-width:100%;}
+    .hero-synopsis{max-width:100%; -webkit-line-clamp:2;}
+    .hero-actions{width:100%;}
+    .hero-btn{flex:1 1 auto; justify-content:center;}
+  }
+
+  .hero-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    z-index:3; width:42px; height:42px; border-radius:50%;
+    background:rgba(11,14,20,.55); border:1px solid var(--line);
+    color:var(--text); font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .2s, transform .2s;
+  }
+  .hero-arrow:hover{background:rgba(11,14,20,.85); transform:translateY(-50%) scale(1.06);}
+  .hero-arrow.prev{left:18px;}
+  .hero-arrow.next{right:18px;}
+
+  .hero-dots{
+    position:absolute; bottom:18px; right:clamp(16px,5vw,48px); z-index:3;
+    display:flex; gap:8px;
+  }
+  .hero-dots button{
+    width:26px; height:4px; border-radius:2px; border:none;
+    background:rgba(255,255,255,.25); cursor:pointer; transition:background .2s, width .2s;
+  }
+  .hero-dots button.active{background:var(--gold); width:38px;}
+
+  /* ---------- SECTIONS ---------- */
+  main{padding:48px clamp(16px,5vw,48px) 80px;}
+  .section{margin-bottom:56px;}
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .section-title{
+    font-family:var(--display);
+    font-size:clamp(22px,3vw,30px);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .section-title .bar{width:6px; height:24px; border-radius:2px;}
+  .section-title.donghua .bar{background:var(--jade);}
+  .section-title.anime .bar{background:var(--amber);}
+  .section-sub{font-family:var(--mono); font-size:12px; color:var(--muted);}
+  .see-all{
+    display:flex; align-items:center; gap:4px;
+    font-family:var(--body); font-weight:700; font-size:13px;
+    color:var(--text); white-space:nowrap; cursor:pointer; background:none; border:none;
+  }
+  .see-all svg{width:16px; height:16px;}
+  .see-all:hover{color:var(--gold);}
+
+  .preview-grid, .catalog-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:16px 14px;
+  }
+  @media (min-width:560px){
+    .preview-grid, .catalog-grid{grid-template-columns:repeat(4, 1fr);}
+  }
+  @media (min-width:860px){
+    .catalog-grid{grid-template-columns:repeat(6, 1fr);}
+  }
+  .preview-grid .card, .catalog-grid .card{flex:none; width:100%;}
+  .preview-grid .poster, .catalog-grid .poster{width:100%; height:auto; aspect-ratio:2/3;}
+
+  .card{
+    flex:0 0 180px;
+    scroll-snap-align:start;
+    cursor:pointer;
+  }
+  .card:focus-visible .poster{outline:2px solid var(--gold); outline-offset:2px;}
+  .poster{
+    position:relative;
+    width:180px; height:252px;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .25s, border-color .25s;
+  }
+  .card:hover .poster{transform:translateY(-6px); border-color:var(--gold);}
+  .poster-glyph{
+    font-family:var(--display);
+    font-size:42px;
+    color:rgba(255,255,255,.35);
+    text-transform:uppercase;
+  }
+  .poster-status{
+    position:absolute; top:8px; left:8px;
+    font-family:var(--mono); font-size:10px; font-weight:700;
+    padding:3px 8px; border-radius:12px;
+    background:rgba(11,14,20,.65); backdrop-filter:blur(2px);
+    display:flex; align-items:center; gap:5px;
+  }
+  .poster-status .dot{width:5px; height:5px; border-radius:50%; background:var(--jade); animation:pulse 1.6s infinite;}
+  .poster-status.end .dot{background:var(--muted); animation:none;}
+
+  .card-title{
+    margin-top:10px; font-size:14px; font-weight:700;
+    line-height:1.3;
+  }
+  .card-eps{
+    margin-top:3px; font-family:var(--mono); font-size:11px; color:var(--muted);
+  }
+
+  /* --- placeholder gradient generator: ganti dengan poster asli (lihat komentar di JS) --- */
+  .pg-0{background:linear-gradient(150deg,#1f2440,#3a2a55);}
+  .pg-1{background:linear-gradient(150deg,#16363a,#1f5c52);}
+  .pg-2{background:linear-gradient(150deg,#3a1f1f,#6e3326);}
+  .pg-3{background:linear-gradient(150deg,#2a1f3a,#5a2a55);}
+  .pg-4{background:linear-gradient(150deg,#1f3a2e,#246e4f);}
+  .pg-5{background:linear-gradient(150deg,#3a2a1f,#6e5226);}
+
+  /* ---------- SEARCH (sekarang dipakai di dalam search overlay) ---------- */
+  .search-overlay{
+    position:fixed; inset:0; z-index:380;
+    background:rgba(5,6,10,.7);
+    display:none; align-items:flex-start; justify-content:center;
+    opacity:0; transition:opacity .2s;
+  }
+  .search-overlay.open{display:flex; opacity:1;}
+  .search-panel{
+    width:100%; max-width:640px;
+    background:var(--ink);
+    margin-top:0;
+    max-height:100vh;
+    overflow-y:auto;
+    border-bottom:1px solid var(--line);
+  }
+  .search-panel-head{
+    display:flex; align-items:center; gap:10px;
+    padding:18px clamp(16px,5vw,32px);
+    border-bottom:1px solid var(--line);
+  }
+  .search-result-list{padding:8px clamp(16px,5vw,32px) 30px;}
+  .search-result-item{
+    display:flex; align-items:center; gap:14px;
+    padding:10px 4px; cursor:pointer; border-radius:8px;
+  }
+  .search-result-item:hover{background:var(--panel-solid);}
+  .search-result-thumb{
+    width:46px; height:64px; border-radius:6px; flex:0 0 auto;
+    overflow:hidden; display:flex; align-items:center; justify-content:center;
+    background-size:cover; background-position:center;
+  }
+  .search-result-thumb .poster-glyph{font-size:16px;}
+  .search-result-info{flex:1; min-width:0;}
+  .search-result-title{font-weight:700; font-size:14px; margin-bottom:3px;}
+  .search-result-meta{font-family:var(--mono); font-size:11px; color:var(--muted);}
+  .search-result-cat{
+    font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 8px;
+    border-radius:10px; border:1px solid var(--jade); color:var(--jade); flex:0 0 auto;
+  }
+  .search-result-cat.anime{border-color:var(--amber); color:var(--amber);}
+
+  .search-wrap{
+    position:relative;
+    flex:1;
+  }
+  .search-wrap svg{
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    width:16px; height:16px; color:var(--muted); pointer-events:none;
+  }
+  #searchInput{
+    width:100%;
+    background:var(--panel-solid);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:13px 40px 13px 38px;
+    color:var(--text);
+    font-family:var(--body);
+    font-size:14px;
+  }
+  #searchInput::placeholder{color:var(--muted);}
+  #searchInput:focus{outline:none; border-color:var(--gold);}
+  #searchClear{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    width:26px; height:26px; border-radius:50%; border:none;
+    background:transparent; color:var(--muted); font-size:16px;
+    cursor:pointer; display:none; align-items:center; justify-content:center;
+  }
+  #searchClear.show{display:flex;}
+  #searchClear:hover{color:var(--text);}
+  .search-overlay-close{
+    width:38px; height:38px; border-radius:50%; flex:0 0 auto;
+    background:var(--panel-solid); border:1px solid var(--line);
+    color:var(--text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:18px;
+  }
+
+  .empty-state{
+    display:none;
+    font-family:var(--mono); font-size:13px; color:var(--muted);
+    padding:18px 4px;
+  }
+
+  /* =========================================================
+     DETAIL ANIME — REDESIGN
+     Semua variabel & style di bawah ini SENGAJA di-scope ke dalam
+     .detail-overlay aja (gak nyentuh :root), jadi cuma halaman
+     Detail Anime yang berubah tampilannya — bagian lain situs
+     (navbar, hero home, list card, dst) tetap seperti semula.
+     ========================================================= */
+  .detail-overlay{
+    --d-bg:#0F1117;
+    --d-bg2:#161B22;
+    --d-card:#1A202C;
+    --d-border:rgba(255,255,255,.08);
+    --d-text:#FFFFFF;
+    --d-muted:#B0B0B0;
+    --d-accent:#ff7a1a;
+    --d-accent-hover:#ff9a3d;
+    --d-font:'Poppins','Inter',sans-serif;
+
+    position:fixed; inset:0; z-index:500;
+    background:rgba(5,6,10,.7);
+    display:none; align-items:flex-end; justify-content:center;
+    opacity:0; transition:opacity .3s;
+    font-family:var(--d-font);
+  }
+  .detail-overlay.open{display:flex; opacity:1;}
+  .detail-sheet{
+    width:100%; max-width:720px; max-height:92vh;
+    background:var(--d-bg);
+    border-radius:18px 18px 0 0;
+    overflow-y:auto; overflow-x:hidden;
+    transform:translateY(40px);
+    transition:transform .35s cubic-bezier(.32,.72,0,1);
+    border:1px solid var(--d-border); border-bottom:none;
+    color:var(--d-text);
+  }
+  .detail-overlay.open .detail-sheet{transform:translateY(0);}
+  .detail-sheet::-webkit-scrollbar{width:6px;}
+  .detail-sheet::-webkit-scrollbar-track{background:transparent;}
+  .detail-sheet::-webkit-scrollbar-thumb{background:var(--d-accent); border-radius:6px;}
+  @media (min-width:860px){
+    .detail-overlay{align-items:center; padding:32px 24px;}
+    .detail-sheet{
+      max-width:920px; max-height:90vh; width:100%;
+      border-radius:18px; border-bottom:1px solid var(--d-border);
+      transform:translateY(16px) scale(.98); opacity:0;
+    }
+    .detail-overlay.open .detail-sheet{transform:translateY(0) scale(1); opacity:1;}
+  }
+
+  /* ---------- SECTION 1: HERO ---------- */
+  .detail-banner{
+    position:relative; width:100%; min-height:300px;
+    overflow:hidden; background:var(--d-bg);
+  }
+  .d-hero-bg{
+    position:absolute; inset:-6%;
+    background-size:cover; background-position:center;
+    transform:scale(1.5);
+    filter:blur(18px) saturate(1.1) brightness(.55);
+    transition:transform 6s ease-out;
+  }
+  .d-hero-scrim{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(to top, var(--d-bg) 4%, rgba(15,17,23,.55) 55%, rgba(15,17,23,.35) 100%),
+      linear-gradient(to right, rgba(5,6,10,.35) 0%, rgba(5,6,10,0) 55%);
+  }
+  .detail-glyph{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-size:64px; color:rgba(255,255,255,.18); z-index:1;
+  }
+  .detail-back{
+    position:absolute; top:16px; left:16px; z-index:5;
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(15,17,23,.65); border:1px solid var(--d-border);
+    backdrop-filter:blur(6px);
+    color:var(--d-text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .2s, border-color .2s;
+  }
+  .detail-back svg{width:18px; height:18px;}
+  .detail-back:hover{background:rgba(15,17,23,.9); border-color:var(--d-accent);}
+  .detail-schedule{
+    display:inline-flex; align-items:center; gap:7px;
+    font-weight:600; font-size:12.5px;
+    padding:6px 12px; border-radius:20px;
+    background:rgba(255,255,255,.06); border:1px solid var(--d-border);
+    width:fit-content; margin-bottom:12px;
+  }
+  .detail-schedule svg{width:14px; height:14px;}
+  .detail-schedule.ongoing{color:var(--d-accent); border-color:rgba(255,122,26,.4);}
+  .detail-schedule.tamat{color:#5fd99a; border-color:rgba(95,217,154,.35);}
+
+  .d-hero-content{
+    position:relative; z-index:2;
+    display:flex; gap:20px; align-items:flex-end;
+    padding:18px clamp(16px,4vw,28px) 22px;
+  }
+  .d-poster-wrap{flex:0 0 auto;}
+  .d-poster{
+    width:120px; height:172px; border-radius:14px;
+    background:var(--d-card) center/cover no-repeat;
+    border:1px solid var(--d-border);
+    box-shadow:0 10px 30px rgba(0,0,0,.45);
+    transition:transform .3s;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .d-poster:hover{transform:scale(1.04);}
+  .d-poster-glyph{
+    font-family:var(--display); font-size:30px; color:rgba(255,255,255,.3);
+  }
+  @media (min-width:560px){ .d-poster{width:170px; height:244px; border-radius:16px;} }
+  @media (min-width:860px){ .d-poster{width:230px; height:330px; border-radius:18px;} }
+
+  .d-hero-info{flex:1; min-width:0;}
+  .detail-title{
+    font-family:var(--d-font); font-weight:800;
+    font-size:clamp(19px,4vw,28px);
+    line-height:1.2; margin-bottom:4px;
+    text-shadow:0 2px 12px rgba(0,0,0,.5);
+  }
+  .d-native-title{margin-bottom:10px;}
+  .d-native-title .d-native-script{
+    font-size:clamp(13px,2.4vw,16px); font-weight:600; color:var(--d-text);
+    opacity:.85; line-height:1.4; text-shadow:0 2px 10px rgba(0,0,0,.5);
+  }
+  .d-native-title .d-native-romanized{
+    font-size:12.5px; color:var(--d-muted); font-style:italic; line-height:1.4;
+  }
+  .d-hero-meta{
+    display:flex; flex-wrap:wrap; gap:6px 14px;
+    font-size:12.5px; color:var(--d-muted); margin-bottom:12px;
+  }
+  .d-hero-meta span{display:inline-flex; align-items:center; gap:5px;}
+  .d-hero-meta svg{width:13px; height:13px; flex:0 0 auto;}
+  .detail-genres{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+  .genre-chip{
+    flex:0 0 auto; font-size:11.5px; font-weight:600;
+    padding:6px 14px; border-radius:999px;
+    border:1px solid var(--d-accent); color:var(--d-accent);
+    background:rgba(255,122,26,.08);
+    white-space:nowrap; transition:background .2s, color .2s;
+  }
+  .genre-chip:hover{background:var(--d-accent); color:#1a0f08;}
+  .genre-chip.donghua{border-color:#2DD4BF; color:#2DD4BF; background:rgba(45,212,191,.08);}
+  .genre-chip.donghua:hover{background:#2DD4BF; color:#06241c;}
+
+  .d-hero-actions{display:none;} /* desktop only, ditampilin lewat media query di bawah */
+  @media (min-width:860px){
+    .d-hero-content{align-items:flex-end;}
+    .d-hero-actions{display:flex; align-items:center; gap:10px; margin-top:4px;}
+  }
+
+  /* ---------- CTA (di body, full width buat semua ukuran layar) ---------- */
+  .d-cta-row{
+    display:flex; flex-wrap:wrap; gap:10px;
+    padding:18px clamp(16px,4vw,28px) 4px;
+  }
+  @media (min-width:860px){ .d-cta-row{display:none;} }
+  .d-btn-primary{
+    flex:1 1 200px;
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    background:var(--d-accent); color:#1a0f08;
+    border:none; border-radius:12px; padding:14px 20px;
+    font-family:var(--d-font); font-weight:700; font-size:14.5px;
+    cursor:pointer; transition:background .2s, transform .2s;
+    box-shadow:0 8px 22px rgba(255,122,26,.25);
+  }
+  .d-btn-primary:hover{background:var(--d-accent-hover); transform:translateY(-1px);}
+  .d-btn-primary svg{width:17px; height:17px;}
+  .d-btn-icon{
+    flex:0 0 auto;
+    width:48px; height:48px; border-radius:12px;
+    background:var(--d-card); border:1px solid var(--d-border);
+    color:var(--d-text); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:border-color .2s, color .2s, transform .2s;
+  }
+  .d-btn-icon svg{width:18px; height:18px;}
+  .d-btn-icon:hover{border-color:var(--d-accent); color:var(--d-accent); transform:translateY(-1px);}
+
+  /* ---------- BODY / CARDS ---------- */
+  .detail-body{padding:4px clamp(16px,4vw,28px) 44px; background:var(--d-bg);}
+  .d-card{
+    background:var(--d-card); border:1px solid var(--d-border); border-radius:18px;
+    padding:20px clamp(16px,3vw,22px); margin-top:16px;
+    animation:dFadeUp .4s ease both;
+  }
+  @keyframes dFadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .d-card-title{
+    font-family:var(--d-font); font-weight:700; font-size:15.5px;
+    margin-bottom:14px; letter-spacing:.2px;
+  }
+  .detail-sinopsis-label{display:none;} /* digantikan .d-card-title */
+  .detail-sinopsis{
+    font-size:14px; line-height:1.75; color:var(--d-muted);
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:6; overflow:hidden;
+    transition:max-height .35s ease;
+  }
+  .detail-sinopsis.expanded{-webkit-line-clamp:unset; overflow:visible;}
+  .d-read-more{
+    background:none; border:none; color:var(--d-accent); font-weight:700; font-size:13px;
+    cursor:pointer; padding:10px 0 0; display:none; font-family:var(--d-font);
+  }
+  .d-read-more.show{display:inline-block;}
+  .d-read-more:hover{color:var(--d-accent-hover); text-decoration:underline;}
+
+  /* ---------- SECTION 3: INFO GRID ---------- */
+  .d-info-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px 18px;
+  }
+  .d-info-item{display:flex; align-items:flex-start; gap:10px; min-width:0;}
+  .d-info-item svg{width:17px; height:17px; flex:0 0 auto; color:var(--d-accent); margin-top:2px;}
+  .d-info-label{font-size:11px; color:var(--d-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px;}
+  .d-info-value{font-size:13.5px; font-weight:600; color:var(--d-text); word-break:break-word;}
+
+  /* ---------- SECTION: ALTERNATIVE TITLES ---------- */
+  .d-alt-list{display:flex; flex-direction:column; gap:12px;}
+  .d-alt-row{
+    display:flex; align-items:baseline; gap:14px;
+    padding-bottom:12px; border-bottom:1px solid var(--d-border);
+  }
+  .d-alt-row:last-child{border-bottom:none; padding-bottom:0;}
+  .d-alt-label{
+    flex:0 0 96px; font-size:11px; color:var(--d-muted);
+    text-transform:uppercase; letter-spacing:.5px; font-weight:600;
+  }
+  .d-alt-value{flex:1; font-size:13.5px; font-weight:600; color:var(--d-text); word-break:break-word; line-height:1.5;}
+
+  /* ---------- SECTION 7: EPISODE LIST ---------- */
+  .detail-episodes{display:none;}
+  .detail-episodes.show{display:block;}
+  .episode-head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:16px; gap:10px;
+  }
+  .season-select-wrap{position:relative;}
+  .season-select-btn{
+    display:flex; align-items:center; gap:8px;
+    background:var(--d-bg2); border:1px solid var(--d-border); border-radius:10px;
+    padding:9px 14px; color:var(--d-text); font-weight:600; font-size:13px;
+    cursor:pointer; font-family:var(--d-font); transition:border-color .2s;
+  }
+  .season-select-btn svg{width:14px; height:14px; transition:transform .2s;}
+  .season-select-btn.open svg{transform:rotate(180deg);}
+  .season-select-btn:hover{border-color:var(--d-accent);}
+  .season-select-panel{
+    position:absolute; top:calc(100% + 6px); right:0; z-index:5;
+    background:var(--d-bg2); border:1px solid var(--d-border); border-radius:12px;
+    padding:6px; min-width:140px;
+    display:none; flex-direction:column; gap:2px;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);
+  }
+  .season-select-panel.open{display:flex;}
+  .season-option{
+    background:transparent; border:none; color:var(--d-muted); text-align:left;
+    padding:9px 10px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;
+    font-family:var(--d-font); transition:background .15s, color .15s;
+  }
+  .season-option:hover{background:rgba(255,255,255,.06); color:var(--d-text);}
+  .season-option.active{color:var(--d-accent); background:rgba(255,122,26,.1);}
+
+  .episode-list-preview{display:flex; flex-direction:column; gap:10px;}
+  .episode-row{
+    display:flex; align-items:center; gap:12px;
+    background:var(--d-bg2); border:1px solid var(--d-border); border-radius:14px;
+    padding:10px 12px; cursor:pointer; transition:border-color .2s, transform .2s;
+  }
+  .episode-row:hover{border-color:var(--d-accent); transform:translateX(2px);}
+  .episode-row-top{display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%;}
+  .episode-row-left{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .episode-row-title{font-weight:700; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .episode-row-date{font-size:11px; color:var(--d-muted);}
+  .episode-watched-check{
+    flex:0 0 auto; width:26px; height:26px; border-radius:50%;
+    border:1.5px solid var(--d-border); display:flex; align-items:center; justify-content:center;
+    color:transparent; transition:all .15s;
+  }
+  .episode-watched-check svg{width:13px; height:13px;}
+  .episode-row.watched .episode-watched-check{background:var(--d-accent); border-color:var(--d-accent); color:#1a0f08;}
+  .episode-empty{font-size:13px; color:var(--d-muted); padding:8px 0;}
+  .see-all-episodes{
+    width:100%;
+    display:flex; align-items:center; justify-content:center; gap:6px; margin-top:14px;
+    background:var(--d-bg2); border:1px solid var(--d-border); border-radius:12px; padding:12px;
+    color:var(--d-accent); font-weight:700; font-size:13px; cursor:pointer;
+    font-family:var(--d-font); transition:border-color .2s;
+  }
+  .see-all-episodes svg{width:15px; height:15px;}
+  .see-all-episodes:hover{border-color:var(--d-accent);}
+
+  /* Progress bar mini di tiap baris episode (posisi terakhir nonton) */
+  .episode-resume-bar{
+    margin-top:7px; height:4px; border-radius:3px; background:var(--d-border); overflow:hidden;
+    display:none;
+  }
+  .episode-resume-bar.show{display:block;}
+  .episode-resume-fill{height:100%; background:var(--d-accent); width:0%;}
+
+  /* ---------- HALAMAN DAFTAR EPISODE PENUH ---------- */
+  .episode-progress-bar{
+    width:100%; height:6px; border-radius:4px; background:var(--panel-solid);
+    border:1px solid var(--line); overflow:hidden; margin-bottom:8px;
+  }
+  .episode-progress-fill{height:100%; background:var(--jade); width:0%; transition:width .3s;}
+  .episode-progress-label{font-family:var(--mono); font-size:12px; color:var(--muted); margin-bottom:22px;}
+  .episode-full-list{display:flex; flex-direction:column; gap:10px;}
+
+  /* ---------- HALAMAN PLAYER VIDEO ---------- */
+  #playerPage{background:#000;}
+  .player-wrap{max-width:920px; margin:0 auto; padding-bottom:60px;}
+  .player-top{
+    display:flex; align-items:center; gap:14px;
+    padding:16px clamp(16px,4vw,28px);
+  }
+  .player-top .page-back{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.15);}
+  .player-top-title{font-weight:700; font-size:14px; color:var(--muted);}
+  .player-video-box{
+    width:100%; aspect-ratio:16/9; background:#000;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .player-video-box video{width:100%; height:100%; display:block;}
+  .player-video-placeholder{
+    color:var(--muted); font-family:var(--mono); font-size:13px; text-align:center; padding:20px;
+  }
+  .player-info{padding:22px clamp(16px,4vw,28px) 0;}
+  .player-ep-title{
+    font-family:var(--display); font-size:clamp(20px,3.5vw,28px); text-transform:none; margin-bottom:8px;
+  }
+  .player-ep-meta{font-family:var(--mono); font-size:12.5px; color:var(--muted); margin-bottom:24px;}
+  .player-nav-btns{display:flex; gap:12px; flex-wrap:wrap;}
+  .player-nav-btn{
+    flex:1; min-width:160px;
+    background:var(--panel-solid); border:1px solid var(--line); border-radius:10px;
+    padding:13px; color:var(--text); font-weight:700; font-size:13px; cursor:pointer;
+  }
+  .player-nav-btn:hover:not(:disabled){border-color:var(--gold);}
+  .player-nav-btn:disabled{opacity:.35; cursor:not-allowed;}
+
+  /* ====== TRENDING MINGGUAN ====== */
+  .trending-scroll{
+    display:flex; gap:14px; overflow-x:auto; padding-bottom:12px;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  }
+  .trending-scroll::-webkit-scrollbar{height:4px;}
+  .trending-scroll::-webkit-scrollbar-track{background:transparent;}
+  .trending-scroll::-webkit-scrollbar-thumb{background:var(--amber); border-radius:4px;}
+  .trending-card{
+    flex:0 0 140px; scroll-snap-align:start; cursor:pointer;
+    position:relative;
+  }
+  @media (min-width:560px){ .trending-card{flex:0 0 160px;} }
+  .trending-rank{
+    position:absolute; top:8px; left:8px; z-index:2;
+    font-family:var(--mono); font-size:10px; font-weight:700;
+    padding:3px 8px; border-radius:12px;
+    background:var(--amber); color:var(--ink);
+  }
+  .trending-badge{
+    position:absolute; top:8px; right:8px; z-index:2;
+    font-family:var(--mono); font-size:9px; font-weight:700;
+    padding:3px 7px; border-radius:12px;
+    background:rgba(11,14,20,.75); backdrop-filter:blur(2px);
+  }
+  .trending-badge.t-donghua{color:var(--jade);}
+  .trending-badge.t-anime{color:var(--amber);}
+  .trending-score{
+    position:absolute; bottom:8px; right:8px; z-index:2;
+    font-family:var(--mono); font-size:10px; font-weight:700; color:var(--gold);
+    background:rgba(11,14,20,.75); backdrop-filter:blur(2px);
+    padding:3px 7px; border-radius:10px;
+    display:flex; align-items:center; gap:4px;
+  }
+  .trending-card .poster{width:100%; height:auto; aspect-ratio:2/3;}
+  .trending-card:hover .poster{transform:translateY(-6px); border-color:var(--gold);}
+  .trending-card .card-title{font-size:13px;}
+
+  /* ====== JADWAL RILIS ====== */
+  .jadwal-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px;
+  }
+  @media (min-width:560px){ .jadwal-grid{grid-template-columns:repeat(3, 1fr);} }
+  @media (min-width:860px){ .jadwal-grid{grid-template-columns:repeat(7, 1fr);} }
+  .jadwal-day{
+    background:var(--panel-solid); border:1px solid var(--line);
+    border-radius:12px; padding:14px 12px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .jadwal-day-name{
+    font-family:var(--display); font-size:13px; text-transform:uppercase;
+    letter-spacing:.5px; padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:6px;
+  }
+  .jadwal-day-dot{width:8px; height:8px; border-radius:50%; flex:0 0 auto;}
+  .jadwal-day-dot.today{background:var(--gold); box-shadow:0 0 6px var(--gold);}
+  .jadwal-day-dot.other{background:var(--muted);}
+  .jadwal-item{
+    display:flex; align-items:center; gap:7px;
+    cursor:pointer; border-radius:6px; padding:4px 2px;
+    transition:background .15s;
+  }
+  .jadwal-item:hover{background:rgba(255,255,255,.05);}
+  .jadwal-item-dot{width:5px; height:5px; border-radius:50%; flex:0 0 auto;}
+  .jadwal-item-dot.d{background:var(--jade);}
+  .jadwal-item-dot.a{background:var(--amber);}
+  .jadwal-item-title{
+    font-size:12.5px; line-height:1.3;
+    overflow:hidden; text-overflow:ellipsis; display:-webkit-box;
+    -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  }
+  .jadwal-empty{font-family:var(--mono); font-size:11px; color:var(--muted);}
+
+  footer{
+    padding:28px clamp(16px,5vw,48px) 40px;
+    border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  @media (max-width:640px){
+    nav a{display:none;}
+    .card{flex:0 0 130px;}
+    .poster{width:130px; height:182px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .slides{transition:none;}
+    .ep-badge .dot, .poster-status .dot{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Buka menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="logo">TONTONAN<span>KU</span></div>
+  </div>
+  <nav>
+    <a href="#" id="navDonghua">Donghua</a>
+    <a href="#" id="navAnime">Anime</a>
+    <a href="#" id="navGenres">Genres</a>
+    <button class="search-icon-btn" id="searchIconBtn" aria-label="Cari judul">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+  </nav>
+</header>
+
+<!-- ====== HERO BANNER (swipeable) ====== -->
+<section class="hero" id="hero">
+  <div class="slides" id="slides">
+    <!-- slide JS digenerate dari data di bawah -->
+  </div>
+  <button class="hero-arrow prev" id="heroPrev" aria-label="Sebelumnya">&#8249;</button>
+  <button class="hero-arrow next" id="heroNext" aria-label="Berikutnya">&#8250;</button>
+  <div class="hero-dots" id="heroDots"></div>
+</section>
+
+<main>
+  <!-- ====== TRENDING MINGGUAN ====== -->
+  <section class="section" id="trending">
+    <div class="section-head">
+      <div class="section-title" style="font-size:clamp(18px,2.5vw,26px);">
+        <span class="bar" style="background:linear-gradient(to bottom, var(--amber), var(--jade));"></span>
+        🔥 Trending Mingguan
+      </div>
+    </div>
+    <div class="trending-scroll" id="trendingScroll"></div>
+  </section>
+
+  <!-- ====== DONGHUA (preview) ====== -->
+  <section class="section" id="donghua">
+    <div class="section-head">
+      <div class="section-title donghua"><span class="bar"></span>Donghua</div>
+      <button class="see-all" id="seeAllDonghua">Lihat Semua <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></button>
+    </div>
+    <div class="preview-grid" id="preview-donghua"></div>
+  </section>
+
+  <!-- ====== ANIME (preview) ====== -->
+  <section class="section" id="anime">
+    <div class="section-head">
+      <div class="section-title anime"><span class="bar"></span>Anime</div>
+      <button class="see-all" id="seeAllAnime">Lihat Semua <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></button>
+    </div>
+    <div class="preview-grid" id="preview-anime"></div>
+  </section>
+
+  <!-- ====== JADWAL RILIS ====== -->
+  <section class="section" id="jadwalRilis">
+    <div class="section-head">
+      <div class="section-title" style="font-size:clamp(18px,2.5vw,26px);">
+        <span class="bar" style="background:linear-gradient(to bottom, var(--jade), var(--amber));"></span>
+        📅 Jadwal Rilis
+      </div>
+    </div>
+    <div class="jadwal-grid" id="jadwalGrid"></div>
+  </section>
+</main>
+
+<footer>
+  <span>TONTONANKU — List Donghua & Anime Reyy. 😛😁😎</span>
+  <span id="totalCount"></span>
+</footer>
+
+<!-- ====== DETAIL MODAL (REDESIGN) ====== -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-sheet" id="detailSheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+
+    <!-- SECTION 1: HERO -->
+    <div class="detail-banner" id="detailBanner">
+      <div class="d-hero-bg" id="detailBannerImg"></div>
+      <div class="d-hero-scrim"></div>
+      <div class="detail-glyph" id="detailGlyph"></div>
+      <button class="detail-back" id="detailClose" aria-label="Tutup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <div class="d-hero-content">
+        <div class="d-poster-wrap">
+          <div class="d-poster" id="detailPosterImg">
+            <div class="d-poster-glyph" id="detailPosterGlyph"></div>
+          </div>
+        </div>
+        <div class="d-hero-info">
+          <div class="detail-schedule" id="detailSchedule"></div>
+          <h2 class="detail-title" id="detailTitle"></h2>
+          <div class="d-native-title" id="detailNativeTitle"></div>
+          <div class="d-hero-meta" id="detailHeroMeta"></div>
+          <div class="detail-genres" id="detailGenres"></div>
+
+          <!-- CTA versi desktop (mobile pakai .d-cta-row di bawah hero) -->
+          <div class="d-hero-actions">
+            <button class="d-btn-primary" id="detailWatchBtnDesktop">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>
+              Watch Now
+            </button>
+            <button class="d-btn-icon" id="detailShareBtnDesktop" aria-label="Bagikan" title="Bagikan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA versi mobile (full width, tampil di bawah hero, sembunyi di desktop lewat CSS) -->
+    <div class="d-cta-row" id="detailCtaMobile">
+      <button class="d-btn-primary" id="detailWatchBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>
+        Watch Now
+      </button>
+      <button class="d-btn-icon" id="detailShareBtn" aria-label="Bagikan" title="Bagikan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+      </button>
+    </div>
+
+    <div class="detail-body">
+      <!-- SECTION 2: SINOPSIS -->
+      <section class="d-card">
+        <h3 class="d-card-title">Sinopsis</h3>
+        <p class="detail-sinopsis" id="detailSinopsis"></p>
+        <button class="d-read-more" id="detailReadMore">Baca Selengkapnya</button>
+      </section>
+
+      <!-- SECTION 3: INFORMASI -->
+      <section class="d-card">
+        <h3 class="d-card-title">Informasi</h3>
+        <div class="d-info-grid" id="detailInfoGrid"></div>
+      </section>
+
+      <!-- SECTION: ALTERNATIVE TITLES (cuma muncul kalau datanya ada) -->
+      <section class="d-card" id="detailAltCard" style="display:none;">
+        <h3 class="d-card-title">Alternative Titles</h3>
+        <div class="d-alt-list" id="detailAltList"></div>
+      </section>
+
+      <!-- SECTION 7: EPISODE LIST -->
+      <div class="detail-episodes" id="detailEpisodes">
+        <section class="d-card">
+          <div class="episode-head">
+            <h3 class="d-card-title" style="margin:0;">Episode</h3>
+            <div class="season-select-wrap">
+              <button class="season-select-btn" id="seasonSelectBtn">
+                <span id="seasonSelectLabel">Season 1</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="season-select-panel" id="seasonSelectPanel"></div>
+            </div>
+          </div>
+          <div class="episode-list-preview" id="episodeListPreview"></div>
+          <button class="see-all-episodes" id="seeAllEpisodes">Lihat Semua Episode <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg></button>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== HALAMAN DAFTAR EPISODE PENUH ====== -->
+<div class="page-overlay" id="episodePage">
+  <div class="page-head">
+    <button class="page-back" id="episodePageBack" aria-label="Kembali">&#8592;</button>
+    <div class="page-title" id="episodePageTitle"></div>
+  </div>
+  <div class="page-body">
+    <div class="episode-progress-bar">
+      <div class="episode-progress-fill" id="episodeProgressFill"></div>
+    </div>
+    <div class="episode-progress-label" id="episodeProgressLabel"></div>
+    <div class="episode-full-list" id="episodeFullList"></div>
+  </div>
+</div>
+
+<!-- ====== HALAMAN PLAYER VIDEO ====== -->
+<div class="page-overlay" id="playerPage">
+  <div class="player-wrap">
+    <div class="player-top">
+      <button class="page-back" id="playerBack" aria-label="Kembali">&#8592;</button>
+      <div class="player-top-title" id="playerTopTitle"></div>
+    </div>
+    <div class="player-video-box" id="playerVideoBox">
+      <!-- <video> elemen disuntik lewat JS pas episode dibuka -->
+    </div>
+    <div class="player-info">
+      <h2 class="player-ep-title" id="playerEpTitle"></h2>
+      <div class="player-ep-meta" id="playerEpMeta"></div>
+      <div class="player-nav-btns">
+        <button class="player-nav-btn" id="playerPrevBtn">&#8249; Episode Sebelumnya</button>
+        <button class="player-nav-btn" id="playerNextBtn">Episode Selanjutnya &#8250;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SEARCH OVERLAY (di kanan atas, ikon kaca pembesar) ====== -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-panel">
+    <div class="search-panel-head">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchInput" type="text" placeholder="Cari judul donghua atau anime...">
+        <button id="searchClear" aria-label="Hapus pencarian">&times;</button>
+      </div>
+      <button class="search-overlay-close" id="searchOverlayClose" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="search-result-list" id="searchResultList"></div>
+    <div class="empty-state" id="searchEmpty" style="display:none; padding-left:clamp(16px,5vw,32px);">Gak ada judul yang cocok.</div>
+  </div>
+</div>
+
+<!-- ====== NAV DRAWER ====== -->
+<div class="drawer-overlay" id="drawerOverlay">
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span>NAVIGATION MENU</span>
+      <button class="drawer-close" id="drawerClose" aria-label="Tutup menu">&times;</button>
+    </div>
+    <div class="drawer-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="drawerSearchInput" type="text" placeholder="Cari judul...">
+    </div>
+    <div class="drawer-menu">
+      <a href="#hero" id="navHome">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        Home
+      </a>
+      <button id="navAllDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Semua
+      </button>
+      <button id="navGenresDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 11 23l-9-9L11.59 4.41A2 2 0 0 1 13 4H20a2 2 0 0 1 2 2v7a2 2 0 0 1-.41 1.41Z"/><circle cx="16" cy="8" r="1.5"/></svg>
+        Genres
+      </button>
+      <button id="navDonghuaDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        Donghua
+      </button>
+      <button id="navAnimeDrawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        Anime
+      </button>
+    </div>
+  </aside>
+</div>
+
+<!-- ====== GENRES PAGE ====== -->
+<div class="page-overlay" id="genresPage">
+  <div class="page-head">
+    <button class="page-back" id="genresBack" aria-label="Kembali">&#8592;</button>
+    <div class="page-title">Genres List</div>
+  </div>
+  <div class="page-body">
+    <div class="page-sub">Pilih genre buat lihat semua donghua/anime yang punya genre itu dari list kamu.</div>
+    <div class="genre-search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="genreSearchInput" type="text" placeholder="Cari genre...">
+    </div>
+    <div class="genre-grid" id="genreGrid"></div>
+    <div class="genre-empty" id="genreEmpty" style="display:none;">Genre gak ditemukan.</div>
+  </div>
+</div>
+
+<!-- ====== LIST PAGE (generik: Donghua/Anime lengkap, hasil genre) ====== -->
+<div class="page-overlay" id="listPage">
+  <div class="page-head">
+    <button class="page-back" id="listPageBack" aria-label="Kembali">&#8592;</button>
+    <div class="page-title" id="listPageTitle"></div>
+  </div>
+  <div class="page-body">
+    <div class="genre-search-wrap" id="listPageSearchWrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="listPageSearchInput" type="text" placeholder="Cari judul...">
+    </div>
+    <div class="catalog-grid" id="listPageGrid"></div>
+    <div class="genre-empty" id="listPageEmpty" style="display:none;">Gak ada judul yang cocok.</div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+// Data katalog (judul, poster, genre, sinopsis, episode) sekarang ada di file terpisah: data.js
+// -> buka data.js buat nambah/edit judul, gak perlu sentuh file ini lagi.
+
+/* ambil item dari DATA berdasarkan daftar judul rekomendasi di atas;
+   kalau ada judul yang gak ketemu / kurang dari "limit", sisanya
+   ditambal pakai judul lain dari DATA biar tetap pas 12 */
+function pickPreview(items, titles, limit){
+  const picked = [];
+  titles.forEach(t => {
+    const found = items.find(i => i.title === t);
+    if (found && !picked.includes(found)) picked.push(found);
+  });
+  for (const item of items) {
+    if (picked.length >= limit) break;
+    if (!picked.includes(item)) picked.push(item);
+  }
+  return picked.slice(0, limit);
+}
+
+function epLabel(item){
+  const seasonPart = item.season ? item.season + " · " : "";
+  if (item.eps === "END") return seasonPart + "Tamat";
+  return seasonPart + "Eps " + item.eps;
+}
+
+function hashTitle(str){
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function buildPoster(item){
+  const div = document.createElement("div");
+  div.className = "poster pg-" + (hashTitle(item.title) % 6);
+  // --> Ganti placeholder dengan poster asli:
+  // if (item.poster) div.style.background = `url(${item.poster}) center/cover`;
+  if (item.poster) {
+    div.style.background = `url(${item.poster}) center/cover`;
+  } else {
+    const glyph = document.createElement("div");
+    glyph.className = "poster-glyph";
+    glyph.textContent = item.title.split(" ").map(w => w[0]).join("").slice(0,3);
+    div.appendChild(glyph);
+  }
+  const status = document.createElement("div");
+  status.className = "poster-status" + (item.eps === "END" ? " end" : "");
+  status.innerHTML = '<span class="dot"></span>' + (item.eps === "END" ? "TAMAT" : "ONGOING");
+  div.appendChild(status);
+  return div;
+}
+
+function buildCard(item, cat){
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.title = item.title;
+  card.dataset.genres = (item.genres || []).join("|").toLowerCase();
+  card.tabIndex = 0;
+  card.appendChild(buildPoster(item));
+  const title = document.createElement("div");
+  title.className = "card-title";
+  title.textContent = item.title;
+  const eps = document.createElement("div");
+  eps.className = "card-eps";
+  eps.textContent = epLabel(item);
+  card.appendChild(title);
+  card.appendChild(eps);
+  card.addEventListener("click", () => openDetail(item, cat));
+  card.addEventListener("keydown", e => { if (e.key === "Enter") openDetail(item, cat); });
+  return card;
+}
+
+/* preview grid di homepage: cuma nampilin "limit" judul pertama */
+function renderPreview(containerId, items, cat, limit){
+  const wrap = document.getElementById(containerId);
+  items.slice(0, limit).forEach(item => wrap.appendChild(buildCard(item, cat)));
+}
+renderPreview("preview-donghua", pickPreview(DATA.donghua, PREVIEW_PICKS_DONGHUA, 12), "donghua", 12);
+renderPreview("preview-anime", pickPreview(DATA.anime, PREVIEW_PICKS_ANIME, 12), "anime", 12);
+
+/* =========================================================
+   TRENDING MINGGUAN — ambil top-10 dari gabungan donghua+anime,
+   urut berdasarkan score tertinggi. Hanya tampilkan item yang
+   punya poster & score, biar hasilnya relevan & menarik.
+   ========================================================= */
+(function renderTrending() {
+  const all = [
+    ...DATA.donghua.map(item => ({ item, cat: "donghua" })),
+    ...DATA.anime.map(item => ({ item, cat: "anime" })),
+  ].filter(({ item }) => item.poster && typeof item.score === "number")
+   .sort((a, b) => b.item.score - a.item.score)
+   .slice(0, 10);
+
+  const wrap = document.getElementById("trendingScroll");
+  all.forEach(({ item, cat }, idx) => {
+    const card = document.createElement("div");
+    card.className = "trending-card";
+
+    const poster = buildPoster(item);
+    poster.style.width = "100%";
+
+    const rank = document.createElement("div");
+    rank.className = "trending-rank";
+    rank.textContent = "#" + (idx + 1);
+
+    const badge = document.createElement("div");
+    badge.className = "trending-badge " + (cat === "anime" ? "t-anime" : "t-donghua");
+    badge.textContent = cat === "anime" ? "ANIME" : "DONGHUA";
+
+    const score = document.createElement("div");
+    score.className = "trending-score";
+    score.innerHTML = "★ " + item.score.toFixed(1);
+
+    poster.appendChild(rank);
+    poster.appendChild(badge);
+    poster.appendChild(score);
+
+    const titleEl = document.createElement("div");
+    titleEl.className = "card-title";
+    titleEl.textContent = item.title;
+
+    card.appendChild(poster);
+    card.appendChild(titleEl);
+    card.addEventListener("click", () => openDetail(item, cat));
+    wrap.appendChild(card);
+  });
+})();
+
+/* =========================================================
+   JADWAL RILIS — grup semua item yang punya releaseDay ke
+   masing-masing hari dalam seminggu. Hari aktif (hari ini)
+   disorot, hari tanpa jadwal tetap dirender dengan pesan kosong
+   agar layout grid konsisten.
+   ========================================================= */
+(function renderJadwal() {
+  const DAYS = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+  const todayIdx = new Date().getDay(); // 0 = Minggu
+  const todayName = DAYS[todayIdx];
+
+  // Kumpulkan semua item berdasarkan hari
+  const byDay = {};
+  DAYS.forEach(d => { byDay[d] = []; });
+  [
+    ...DATA.donghua.map(i => ({ item: i, cat: "donghua" })),
+    ...DATA.anime.map(i => ({ item: i, cat: "anime" })),
+  ].forEach(({ item, cat }) => {
+    if (item.releaseDay && byDay[item.releaseDay] !== undefined) {
+      byDay[item.releaseDay].push({ item, cat });
+    }
+  });
+
+  // Urutan hari: mulai dari hari ini lalu maju
+  const orderedDays = [...DAYS.slice(todayIdx), ...DAYS.slice(0, todayIdx)];
+
+  const grid = document.getElementById("jadwalGrid");
+  orderedDays.forEach(day => {
+    const entries = byDay[day];
+    const col = document.createElement("div");
+    col.className = "jadwal-day";
+
+    const isToday = day === todayName;
+    const dayHead = document.createElement("div");
+    dayHead.className = "jadwal-day-name";
+    const dot = document.createElement("span");
+    dot.className = "jadwal-day-dot " + (isToday ? "today" : "other");
+    dayHead.appendChild(dot);
+    dayHead.appendChild(document.createTextNode(day + (isToday ? " (Hari ini)" : "")));
+    col.appendChild(dayHead);
+
+    if (entries.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "jadwal-empty";
+      empty.textContent = "—";
+      col.appendChild(empty);
+    } else {
+      entries.forEach(({ item, cat }) => {
+        const row = document.createElement("div");
+        row.className = "jadwal-item";
+        const dot2 = document.createElement("span");
+        dot2.className = "jadwal-item-dot " + (cat === "donghua" ? "d" : "a");
+        const t = document.createElement("span");
+        t.className = "jadwal-item-title";
+        t.textContent = item.title;
+        row.appendChild(dot2);
+        row.appendChild(t);
+        row.addEventListener("click", () => openDetail(item, cat));
+        col.appendChild(row);
+      });
+    }
+    grid.appendChild(col);
+  });
+})();
+
+document.getElementById("totalCount").textContent =
+  (DATA.donghua.length + DATA.anime.length) + " judul tersimpan";
+
+/* =========================================================
+   LIST PAGE — halaman generik buat nampilin daftar lengkap:
+   dipakai buat "Lihat Semua" Donghua, "Lihat Semua" Anime,
+   hasil filter genre, dan hasil pencarian.
+   ========================================================= */
+const listPage = document.getElementById("listPage");
+const listPageBack = document.getElementById("listPageBack");
+const listPageTitle = document.getElementById("listPageTitle");
+const listPageGrid = document.getElementById("listPageGrid");
+const listPageEmpty = document.getElementById("listPageEmpty");
+const listPageSearchWrap = document.getElementById("listPageSearchWrap");
+const listPageSearchInput = document.getElementById("listPageSearchInput");
+let listPageSource = [];
+
+function renderListPageGrid(query){
+  const q = (query || "").trim().toLowerCase();
+  const filtered = listPageSource.filter(({ item }) => item.title.toLowerCase().includes(q));
+  listPageGrid.innerHTML = "";
+  if (filtered.length === 0) {
+    listPageEmpty.style.display = "block";
+    listPageGrid.style.display = "none";
+    return;
+  }
+  listPageEmpty.style.display = "none";
+  listPageGrid.style.display = "grid";
+  filtered.forEach(({ item, cat }) => listPageGrid.appendChild(buildCard(item, cat)));
+}
+
+function openListPage(title, source, { searchable = true } = {}){
+  listPageTitle.textContent = title;
+  listPageSource = source;
+  listPageSearchInput.value = "";
+  listPageSearchWrap.style.display = searchable ? "" : "none";
+  renderListPageGrid("");
+  listPage.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeListPage(){
+  listPage.classList.remove("open");
+  document.body.style.overflow = "";
+}
+listPageBack.addEventListener("click", closeListPage);
+listPageSearchInput.addEventListener("input", e => renderListPageGrid(e.target.value));
+
+function donghuaSource(){ return DATA.donghua.map(item => ({ item, cat: "donghua" })); }
+function animeSource(){ return DATA.anime.map(item => ({ item, cat: "anime" })); }
+function allSource(){ return [...donghuaSource(), ...animeSource()]; }
+
+document.getElementById("seeAllDonghua").addEventListener("click", () => openListPage("Donghua", donghuaSource()));
+document.getElementById("seeAllAnime").addEventListener("click", () => openListPage("Anime", animeSource()));
+document.getElementById("navDonghua").addEventListener("click", e => { e.preventDefault(); openListPage("Donghua", donghuaSource()); });
+document.getElementById("navAnime").addEventListener("click", e => { e.preventDefault(); openListPage("Anime", animeSource()); });
+
+/* =========================================================
+   NAV DRAWER — menu hamburger di kiri atas.
+   ========================================================= */
+const drawerOverlay = document.getElementById("drawerOverlay");
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const drawerClose = document.getElementById("drawerClose");
+const drawerSearchInput = document.getElementById("drawerSearchInput");
+
+function openDrawer(){ drawerOverlay.classList.add("open"); }
+function closeDrawer(){ drawerOverlay.classList.remove("open"); }
+hamburgerBtn.addEventListener("click", openDrawer);
+drawerClose.addEventListener("click", closeDrawer);
+drawerOverlay.addEventListener("click", e => { if (e.target === drawerOverlay) closeDrawer(); });
+document.querySelectorAll(".drawer-menu a").forEach(a => a.addEventListener("click", closeDrawer));
+document.getElementById("navAllDrawer").addEventListener("click", () => { closeDrawer(); openListPage("Semua", allSource()); });
+document.getElementById("navDonghuaDrawer").addEventListener("click", () => { closeDrawer(); openListPage("Donghua", donghuaSource()); });
+document.getElementById("navAnimeDrawer").addEventListener("click", () => { closeDrawer(); openListPage("Anime", animeSource()); });
+drawerSearchInput.addEventListener("input", e => {
+  closeDrawer();
+  openSearchOverlay();
+  searchInput.value = e.target.value;
+  renderSearchResults(e.target.value);
+});
+
+/* =========================================================
+   SEARCH OVERLAY — ikon kaca pembesar di kanan atas header.
+   Cari di SEMUA judul (donghua + anime), hasil tampil sebagai
+   list. Klik salah satu hasil langsung buka modal detailnya.
+   ========================================================= */
+const searchOverlay = document.getElementById("searchOverlay");
+const searchOverlayClose = document.getElementById("searchOverlayClose");
+const searchIconBtn = document.getElementById("searchIconBtn");
+const searchInput = document.getElementById("searchInput");
+const searchClear = document.getElementById("searchClear");
+const searchResultList = document.getElementById("searchResultList");
+const searchEmpty = document.getElementById("searchEmpty");
+
+function buildSearchResultItem(item, cat){
+  const el = document.createElement("div");
+  el.className = "search-result-item";
+  const thumb = document.createElement("div");
+  thumb.className = "search-result-thumb pg-" + (hashTitle(item.title) % 6);
+  if (item.poster) {
+    thumb.style.backgroundImage = `url(${item.poster})`;
+  } else {
+    const glyph = document.createElement("div");
+    glyph.className = "poster-glyph";
+    glyph.textContent = item.title.split(" ").map(w => w[0]).join("").slice(0,2);
+    thumb.appendChild(glyph);
+  }
+  const info = document.createElement("div");
+  info.className = "search-result-info";
+  const title = document.createElement("div");
+  title.className = "search-result-title";
+  title.textContent = item.title;
+  const meta = document.createElement("div");
+  meta.className = "search-result-meta";
+  meta.textContent = epLabel(item);
+  info.appendChild(title);
+  info.appendChild(meta);
+  const catTag = document.createElement("span");
+  catTag.className = "search-result-cat" + (cat === "anime" ? " anime" : "");
+  catTag.textContent = cat === "anime" ? "Anime" : "Donghua";
+  el.appendChild(thumb);
+  el.appendChild(info);
+  el.appendChild(catTag);
+  el.addEventListener("click", () => { closeSearchOverlay(); openDetail(item, cat); });
+  return el;
+}
+
+function renderSearchResults(query){
+  const q = query.trim().toLowerCase();
+  searchClear.classList.toggle("show", q.length > 0);
+  searchResultList.innerHTML = "";
+  if (q === "") { searchEmpty.style.display = "none"; return; }
+  const matches = allSource().filter(({ item }) => item.title.toLowerCase().includes(q));
+  if (matches.length === 0) {
+    searchEmpty.style.display = "block";
+    return;
+  }
+  searchEmpty.style.display = "none";
+  matches.slice(0, 40).forEach(({ item, cat }) => searchResultList.appendChild(buildSearchResultItem(item, cat)));
+}
+
+function openSearchOverlay(){
+  searchOverlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(() => searchInput.focus(), 50);
+}
+function closeSearchOverlay(){
+  searchOverlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+searchIconBtn.addEventListener("click", openSearchOverlay);
+searchOverlayClose.addEventListener("click", closeSearchOverlay);
+searchOverlay.addEventListener("click", e => { if (e.target === searchOverlay) closeSearchOverlay(); });
+searchInput.addEventListener("input", e => renderSearchResults(e.target.value));
+searchClear.addEventListener("click", () => { searchInput.value = ""; renderSearchResults(""); searchInput.focus(); });
+
+/* =========================================================
+   GENRES PAGE — daftar genre dihitung otomatis dari field
+   "genres" di tiap item DATA. Klik satu genre buat buka
+   LIST PAGE berisi semua judul (donghua+anime) dengan genre itu.
+   ========================================================= */
+const genresPage = document.getElementById("genresPage");
+const genresBack = document.getElementById("genresBack");
+const genreSearchInput = document.getElementById("genreSearchInput");
+const navGenres = document.getElementById("navGenres");
+const navGenresDrawer = document.getElementById("navGenresDrawer");
+
+function computeGenreCounts(){
+  const counts = {};
+  [...DATA.donghua, ...DATA.anime].forEach(item => {
+    (item.genres || []).forEach(g => { counts[g] = (counts[g] || 0) + 1; });
+  });
+  return counts;
+}
+
+function renderGenresPage(filterText){
+  const counts = computeGenreCounts();
+  const grid = document.getElementById("genreGrid");
+  const emptyEl = document.getElementById("genreEmpty");
+  grid.innerHTML = "";
+  const q = (filterText || "").trim().toLowerCase();
+  const names = Object.keys(counts).sort((a,b) => a.localeCompare(b)).filter(g => g.toLowerCase().includes(q));
+
+  if (names.length === 0) {
+    emptyEl.style.display = "block";
+    grid.style.display = "none";
+    return;
+  }
+  emptyEl.style.display = "none";
+  grid.style.display = "grid";
+
+  names.forEach(g => {
+    const card = document.createElement("div");
+    card.className = "genre-card";
+    const name = document.createElement("div");
+    name.className = "genre-card-name";
+    name.textContent = g;
+    const count = document.createElement("div");
+    count.className = "genre-card-count";
+    count.innerHTML = '<span class="dot"></span>' + counts[g] + " judul";
+    card.appendChild(name);
+    card.appendChild(count);
+    card.addEventListener("click", () => {
+      closeGenresPage();
+      const filtered = allSource().filter(({ item }) => (item.genres || []).includes(g));
+      openListPage("Genre: " + g, filtered, { searchable: false });
+    });
+    grid.appendChild(card);
+  });
+}
+
+function openGenresPage(){
+  renderGenresPage(genreSearchInput.value);
+  genresPage.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeGenresPage(){
+  genresPage.classList.remove("open");
+  document.body.style.overflow = "";
+}
+genresBack.addEventListener("click", closeGenresPage);
+genreSearchInput.addEventListener("input", e => renderGenresPage(e.target.value));
+navGenres.addEventListener("click", e => { e.preventDefault(); openGenresPage(); });
+navGenresDrawer.addEventListener("click", () => { closeDrawer(); openGenresPage(); });
+
+/* =========================================================
+   DETAIL MODAL — muncul saat kartu di-klik, isinya genre,
+   sinopsis, judul, dan badge jadwal (ongoing/tamat).
+   Genre & sinopsis: isi field "genres" dan "synopsis" di data
+   item-nya kalau belum ada (lihat contoh di beberapa judul).
+   releaseDay: isi field ini (contoh: "Sabtu") biar badge-nya
+   nampilin "Setiap Sabtu" pas status ongoing.
+   ========================================================= */
+const ICON_CALENDAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>';
+const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+
+const detailOverlay = document.getElementById("detailOverlay");
+const detailBanner = document.getElementById("detailBanner");
+const detailBannerImg = document.getElementById("detailBannerImg");
+const detailGlyph = document.getElementById("detailGlyph");
+const detailSchedule = document.getElementById("detailSchedule");
+const detailTitleEl = document.getElementById("detailTitle");
+const detailGenres = document.getElementById("detailGenres");
+const detailNativeTitle = document.getElementById("detailNativeTitle");
+const detailSinopsis = document.getElementById("detailSinopsis");
+const detailClose = document.getElementById("detailClose");
+const detailPosterImg = document.getElementById("detailPosterImg");
+const detailPosterGlyph = document.getElementById("detailPosterGlyph");
+const detailHeroMeta = document.getElementById("detailHeroMeta");
+const detailInfoGrid = document.getElementById("detailInfoGrid");
+const detailReadMore = document.getElementById("detailReadMore");
+const detailAltCard = document.getElementById("detailAltCard");
+const detailAltList = document.getElementById("detailAltList");
+
+/* ---------- ikon kecil buat grid Informasi & meta (Lucide-style) ---------- */
+const ICON_STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+const ICON_FILM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>';
+const ICON_BUILDING = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="1"/><line x1="9" y1="6" x2="9" y2="6"/><line x1="15" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="9" y2="10"/><line x1="15" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="9" y2="14"/><line x1="15" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="15" y2="18"/></svg>';
+const ICON_CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const ICON_LAYERS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>';
+const ICON_TYPE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>';
+
+/* ---------- elemen baru yang dipopulasikan dari data "item" yang SAMA
+   (gak ada fetch/endpoint baru — cuma nampilin field yang sudah ada). ---------- */
+function renderDetailExtras(item, cat){
+  // poster tajam di kartu hero (terpisah dari background blur)
+  if (item.poster) {
+    detailPosterImg.style.backgroundImage = `url(${item.poster})`;
+    detailPosterGlyph.textContent = "";
+  } else {
+    detailPosterImg.style.backgroundImage = "none";
+    detailPosterGlyph.textContent = item.title.split(" ").map(w => w[0]).join("").slice(0,3);
+  }
+
+  // baris meta singkat di bawah judul: rating, episode, durasi, studio
+  detailHeroMeta.innerHTML = "";
+  const metaParts = [];
+  if (typeof item.score === "number") metaParts.push([ICON_STAR, item.score]);
+  metaParts.push([ICON_FILM, epLabel(item)]);
+  if (item.duration) metaParts.push([ICON_CLOCK, item.duration]);
+  if (item.studio) metaParts.push([ICON_BUILDING, item.studio]);
+  metaParts.forEach(([icon, text]) => {
+    const span = document.createElement("span");
+    span.innerHTML = icon + text;
+    detailHeroMeta.appendChild(span);
+  });
+
+  // grid "Informasi" — cuma nampilin field yang memang terisi di data.
+  // Field baru (source, producers, country, premiered, aired, contentRating,
+  // themes, demographics) OPSIONAL — kalau data lama belum punya field ini,
+  // baris itu otomatis gak dirender (gak ada error, gak ada baris kosong).
+  detailInfoGrid.innerHTML = "";
+  const infoFields = [
+    [ICON_TYPE, "Type", item.type],
+    [ICON_CHECK, "Status", item.status],
+    [ICON_BUILDING, "Studio", item.studio],
+    [ICON_BUILDING, "Producer", Array.isArray(item.producers) ? item.producers.join(", ") : item.producers],
+    [ICON_LAYERS, "Source", item.source],
+    [ICON_CLOCK, "Duration", item.duration],
+    [ICON_FILM, "Episodes", item.eps],
+    [ICON_LAYERS, "Season", item.season],
+    [ICON_CALENDAR, "Premiered", item.premiered],
+    [ICON_CALENDAR, "Released", item.year],
+    [ICON_CALENDAR, "Aired", item.aired],
+    [ICON_LAYERS, "Country", item.country],
+    [ICON_STAR, "Rating", item.score],
+    [ICON_CHECK, "Content Rating", item.contentRating],
+    [ICON_LAYERS, "Themes", Array.isArray(item.themes) ? item.themes.join(", ") : item.themes],
+    [ICON_LAYERS, "Demographic", Array.isArray(item.demographics) ? item.demographics.join(", ") : item.demographics],
+  ];
+  infoFields.forEach(([icon, label, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    const cell = document.createElement("div");
+    cell.className = "d-info-item";
+    cell.innerHTML = `${icon}<div><div class="d-info-label">${label}</div><div class="d-info-value"></div></div>`;
+    cell.querySelector(".d-info-value").textContent = value;
+    detailInfoGrid.appendChild(cell);
+  });
+
+  // judul asli (native script + romanisasi) tampil LANGSUNG di bawah judul utama.
+  // Dinamis sesuai jenis konten: Anime -> Japanese + Romaji, Donghua -> Chinese + Pinyin.
+  // (cat dikirim dari pemanggil openDetail(), gak ada field/endpoint baru.)
+  const isDonghua = cat !== "anime";
+  const alt = item.alternativeTitles || {};
+  const nativeScript = isDonghua ? alt.chinese : alt.japanese;
+  const romanized = alt.romaji; // utk anime ini Romaji asli, utk donghua AniList nyimpen Pinyin di field yang sama
+  detailNativeTitle.innerHTML = "";
+  if (nativeScript) {
+    const line1 = document.createElement("div");
+    line1.className = "d-native-script";
+    line1.textContent = nativeScript;
+    detailNativeTitle.appendChild(line1);
+  }
+  if (romanized) {
+    const line2 = document.createElement("div");
+    line2.className = "d-native-romanized";
+    line2.textContent = romanized;
+    detailNativeTitle.appendChild(line2);
+  }
+
+  // card "Alternative Titles" — tetap lengkap di bagian bawah, tapi field
+  // yang gak relevan sama jenis kontennya disembunyikan (Anime gak nampilin
+  // Chinese, Donghua gak nampilin Japanese), sesuai jenis konten masing-masing.
+  detailAltList.innerHTML = "";
+  const altRows = (isDonghua ? [
+    ["Chinese (Simplified)", alt.chinese],
+    ["Pinyin", alt.romaji],
+    ["English", alt.english],
+    ["Synonyms", Array.isArray(alt.synonyms) ? alt.synonyms.join(", ") : alt.synonyms],
+  ] : [
+    ["Japanese", alt.japanese],
+    ["Romaji", alt.romaji],
+    ["English", alt.english],
+    ["Synonyms", Array.isArray(alt.synonyms) ? alt.synonyms.join(", ") : alt.synonyms],
+  ]).filter(([, value]) => value !== undefined && value !== null && value !== "");
+  detailAltCard.style.display = altRows.length ? "" : "none";
+  altRows.forEach(([label, value]) => {
+    const row = document.createElement("div");
+    row.className = "d-alt-row";
+    row.innerHTML = `<div class="d-alt-label">${label}</div><div class="d-alt-value"></div>`;
+    row.querySelector(".d-alt-value").textContent = value;
+    detailAltList.appendChild(row);
+  });
+
+  // sinopsis "Baca Selengkapnya" — expand/collapse, animasi via CSS transition
+  detailSinopsis.classList.remove("expanded");
+  const isLong = (item.synopsis || "").length > 250;
+  detailReadMore.classList.toggle("show", isLong);
+  detailReadMore.textContent = "Baca Selengkapnya";
+  detailReadMore.onclick = () => {
+    const expanded = detailSinopsis.classList.toggle("expanded");
+    detailReadMore.textContent = expanded ? "Sembunyikan" : "Baca Selengkapnya";
+  };
+
+  // tombol Watch Now (mobile + desktop) — pakai logic yang SAMA persis
+  // dengan tombol "Watch Now" di hero carousel beranda (season pertama, episode pertama).
+  const watchHandler = () => {
+    const firstSeason = (item.seasons || [])[0];
+    if (firstSeason && firstSeason.episodes && firstSeason.episodes.length) {
+      openPlayerPage(item, firstSeason, 0);
+    } else {
+      seeAllEpisodes.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+  document.getElementById("detailWatchBtn").onclick = watchHandler;
+  document.getElementById("detailWatchBtnDesktop").onclick = watchHandler;
+
+  // tombol Share — pakai Web Share API kalau didukung browser, fallback copy link
+  const shareHandler = async () => {
+    const shareData = { title: item.title, text: `Nonton ${item.title} di TONTONANKU`, url: location.href };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else { await navigator.clipboard.writeText(location.href); alert("Link disalin ke clipboard!"); }
+    } catch (e) { /* user batal share, abaikan */ }
+  };
+  document.getElementById("detailShareBtn").onclick = shareHandler;
+  document.getElementById("detailShareBtnDesktop").onclick = shareHandler;
+}
+
+function openDetail(item, cat){
+  // Header modal detail dibangun dari "poster" (portrait) yang sama
+  // dipakai di kartu list — di-cover + di-zoom dikit + diblur biar pas
+  // distretch ke kotak lebar ini tetap kelihatan sinematik, bukan kosong.
+  const img = item.poster;
+  if (img) {
+    detailBannerImg.style.backgroundImage = `url(${img})`;
+    detailBanner.classList.remove("pg-0","pg-1","pg-2","pg-3","pg-4","pg-5");
+    detailGlyph.textContent = "";
+  } else {
+    detailBannerImg.style.backgroundImage = "none";
+    const paletteClass = "pg-" + (hashTitle(item.title) % 6);
+    detailBanner.className = "detail-banner " + paletteClass;
+    detailGlyph.textContent = item.title.split(" ").map(w => w[0]).join("").slice(0,3);
+  }
+
+  const isEnd = item.eps === "END";
+  detailSchedule.className = "detail-schedule " + (isEnd ? "tamat" : "ongoing");
+  detailSchedule.innerHTML = isEnd
+    ? ICON_CHECK + "Tamat"
+    : ICON_CALENDAR + (item.releaseDay ? "Setiap " + item.releaseDay : "Update berkala");
+
+  detailTitleEl.textContent = item.title + (item.season ? " " + item.season : "");
+
+  detailGenres.innerHTML = "";
+  const genres = (item.genres && item.genres.length) ? item.genres : ["Genre belum diisi"];
+  genres.forEach(g => {
+    const chip = document.createElement("span");
+    chip.className = "genre-chip" + (cat === "donghua" ? " donghua" : "");
+    chip.textContent = g;
+    detailGenres.appendChild(chip);
+  });
+
+  detailSinopsis.textContent = item.synopsis ||
+    `Sinopsis "${item.title}" belum ditambahkan. Isi field "synopsis" di data item ini buat nampilin di sini.`;
+
+  renderEpisodeSection(item);
+  renderDetailExtras(item, cat);
+
+  detailOverlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeDetail(){
+  detailOverlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+detailClose.addEventListener("click", closeDetail);
+detailOverlay.addEventListener("click", e => { if (e.target === detailOverlay) closeDetail(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetail(); });
+
+/* =========================================================
+   EPISODE / SEASON + VIDEO PLAYER
+   -----------------------------------------------------------
+   Isi field "seasons" di data item kalau mau nampilin daftar
+   episode dan bisa diputar lewat player situs ini sendiri.
+
+   seasons: [
+     { label: "Season 1", episodes: [
+         { ep: 1, title: "Judul episode (opsional)", date: "29 Mei 2024",
+           videoUrl: "videos/judul-ep1.mp4" },
+         { ep: 2, date: "05 Jun 2024", videoUrl: "videos/judul-ep2.mp4" },
+     ]}
+   ]
+
+   videoUrl: path/URL ke file video MILIK KAMU SENDIRI (mp4/webm/
+   m3u8 dst). Player pakai elemen <video> HTML5 bawaan browser.
+   Kalau videoUrl kosong tapi ada "link", klik episode itu cuma
+   buka link itu di tab baru (fallback, bukan player internal).
+
+   RESUME / "tonton ulang dari posisi terakhir":
+   posisi terakhir nonton disimpan otomatis ke localStorage
+   browser kamu sendiri (per-device, gak ke server manapun).
+   Kalau video ditutup di tengah jalan, next kali dibuka lagi
+   otomatis lanjut dari detik terakhir. Progress bar kecil di
+   tiap baris episode juga nunjukin seberapa jauh udah ditonton.
+   ========================================================= */
+const detailEpisodes = document.getElementById("detailEpisodes");
+const seasonSelectBtn = document.getElementById("seasonSelectBtn");
+const seasonSelectLabel = document.getElementById("seasonSelectLabel");
+const seasonSelectPanel = document.getElementById("seasonSelectPanel");
+const episodeListPreview = document.getElementById("episodeListPreview");
+const seeAllEpisodes = document.getElementById("seeAllEpisodes");
+let currentItem = null;
+let currentSeasons = [];
+let currentSeasonIndex = 0;
+
+/* --- penyimpanan progress nonton (localStorage) --- */
+function progressKey(title, seasonLabel, ep){
+  return "progress::" + title + "::" + seasonLabel + "::" + ep;
+}
+function getProgress(title, seasonLabel, ep){
+  try {
+    const raw = localStorage.getItem(progressKey(title, seasonLabel, ep));
+    return raw ? JSON.parse(raw) : { time: 0, duration: 0, watched: false };
+  } catch(e) { return { time: 0, duration: 0, watched: false }; }
+}
+function saveProgress(title, seasonLabel, ep, time, duration){
+  try {
+    const watched = duration > 0 && time / duration > 0.9; // dianggap "selesai" kalau udah nonton >90%
+    localStorage.setItem(progressKey(title, seasonLabel, ep), JSON.stringify({ time, duration, watched }));
+  } catch(e) { /* localStorage gak tersedia, abaikan diam-diam */ }
+}
+function setWatchedManual(title, seasonLabel, ep, val){
+  const p = getProgress(title, seasonLabel, ep);
+  p.watched = val;
+  if (!val) { p.time = 0; }
+  try { localStorage.setItem(progressKey(title, seasonLabel, ep), JSON.stringify(p)); } catch(e){}
+}
+
+function buildEpisodeRow(item, season, episode){
+  const row = document.createElement("div");
+  const progress = getProgress(item.title, season.label, episode.ep);
+  row.className = "episode-row" + (progress.watched ? " watched" : "");
+
+  const top = document.createElement("div");
+  top.className = "episode-row-top";
+
+  const left = document.createElement("div");
+  left.className = "episode-row-left";
+  const title = document.createElement("div");
+  title.className = "episode-row-title";
+  title.textContent = "Episode " + episode.ep + (episode.title ? " — " + episode.title : "");
+  left.appendChild(title);
+  if (episode.date) {
+    const date = document.createElement("div");
+    date.className = "episode-row-date";
+    date.textContent = episode.date;
+    left.appendChild(date);
+  }
+
+  const check = document.createElement("div");
+  check.className = "episode-watched-check";
+  check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+  check.title = "Tandai sudah ditonton";
+  check.addEventListener("click", e => {
+    e.stopPropagation();
+    const nowWatched = !row.classList.contains("watched");
+    row.classList.toggle("watched", nowWatched);
+    setWatchedManual(item.title, season.label, episode.ep, nowWatched);
+    resumeFill.style.width = nowWatched ? "100%" : "0%";
+    if (document.getElementById("episodePage").classList.contains("open")) {
+      updateEpisodeProgress(item, season);
+    }
+  });
+
+  top.appendChild(left);
+  top.appendChild(check);
+  row.appendChild(top);
+
+  /* progress bar kecil -- nunjukin posisi terakhir nonton, kalau ada */
+  const resumeBar = document.createElement("div");
+  resumeBar.className = "episode-resume-bar";
+  const resumeFill = document.createElement("div");
+  resumeFill.className = "episode-resume-fill";
+  if (progress.duration > 0 && !progress.watched && progress.time > 0) {
+    resumeBar.classList.add("show");
+    resumeFill.style.width = Math.round((progress.time / progress.duration) * 100) + "%";
+  }
+  resumeBar.appendChild(resumeFill);
+  row.appendChild(resumeBar);
+
+  if (episode.videoUrl || episode.link) {
+    row.style.cursor = "pointer";
+    row.addEventListener("click", e => {
+      if (e.target.closest(".episode-watched-check")) return;
+      if (episode.videoUrl) {
+        const epIndex = season.episodes.indexOf(episode);
+        openPlayerPage(item, season, epIndex);
+      } else {
+        window.open(episode.link, "_blank");
+      }
+    });
+  }
+  return row;
+}
+
+function renderEpisodePreview(item, seasonIndex){
+  const season = currentSeasons[seasonIndex];
+  episodeListPreview.innerHTML = "";
+  if (!season || !season.episodes || season.episodes.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "episode-empty";
+    empty.textContent = "Belum ada episode buat season ini.";
+    episodeListPreview.appendChild(empty);
+    return;
+  }
+  season.episodes.slice(0, 4).forEach(ep => episodeListPreview.appendChild(buildEpisodeRow(item, season, ep)));
+}
+
+function renderSeasonOptions(item, activeIndex){
+  seasonSelectPanel.innerHTML = "";
+  currentSeasons.forEach((season, i) => {
+    const opt = document.createElement("button");
+    opt.className = "season-option" + (i === activeIndex ? " active" : "");
+    opt.textContent = season.label;
+    opt.addEventListener("click", () => {
+      currentSeasonIndex = i;
+      seasonSelectLabel.textContent = season.label;
+      renderEpisodePreview(item, i);
+      renderSeasonOptions(item, i);
+      seasonSelectPanel.classList.remove("open");
+      seasonSelectBtn.classList.remove("open");
+    });
+    seasonSelectPanel.appendChild(opt);
+  });
+}
+
+function renderEpisodeSection(item){
+  currentItem = item;
+  currentSeasons = item.seasons || [];
+  currentSeasonIndex = 0;
+  if (currentSeasons.length === 0) {
+    detailEpisodes.classList.remove("show");
+    return;
+  }
+  detailEpisodes.classList.add("show");
+  seasonSelectLabel.textContent = currentSeasons[0].label;
+  renderSeasonOptions(item, 0);
+  renderEpisodePreview(item, 0);
+}
+
+seasonSelectBtn.addEventListener("click", () => {
+  seasonSelectPanel.classList.toggle("open");
+  seasonSelectBtn.classList.toggle("open");
+});
+document.addEventListener("click", e => {
+  if (!seasonSelectBtn.contains(e.target) && !seasonSelectPanel.contains(e.target)) {
+    seasonSelectPanel.classList.remove("open");
+    seasonSelectBtn.classList.remove("open");
+  }
+});
+
+/* =========================================================
+   HALAMAN DAFTAR EPISODE PENUH
+   ========================================================= */
+const episodePage = document.getElementById("episodePage");
+const episodePageBack = document.getElementById("episodePageBack");
+const episodePageTitle = document.getElementById("episodePageTitle");
+const episodeFullList = document.getElementById("episodeFullList");
+const episodeProgressFill = document.getElementById("episodeProgressFill");
+const episodeProgressLabel = document.getElementById("episodeProgressLabel");
+
+function updateEpisodeProgress(item, season){
+  const total = season.episodes.length;
+  const watchedCount = season.episodes.filter(ep => getProgress(item.title, season.label, ep.ep).watched).length;
+  const pct = total === 0 ? 0 : Math.round((watchedCount / total) * 100);
+  episodeProgressFill.style.width = pct + "%";
+  episodeProgressLabel.textContent = `${watchedCount} dari ${total} episode sudah ditonton (${pct}%)`;
+}
+
+function openEpisodePage(){
+  const season = currentSeasons[currentSeasonIndex];
+  if (!season) return;
+  episodePageTitle.textContent = currentItem.title + " — " + season.label;
+  episodeFullList.innerHTML = "";
+  season.episodes.forEach(ep => episodeFullList.appendChild(buildEpisodeRow(currentItem, season, ep)));
+  updateEpisodeProgress(currentItem, season);
+  episodePage.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeEpisodePage(){
+  episodePage.classList.remove("open");
+  document.body.style.overflow = "";
+  if (currentItem) renderEpisodePreview(currentItem, currentSeasonIndex);
+}
+seeAllEpisodes.addEventListener("click", openEpisodePage);
+episodePageBack.addEventListener("click", closeEpisodePage);
+
+/* =========================================================
+   PLAYER VIDEO
+   -----------------------------------------------------------
+   Pakai elemen <video> HTML5 bawaan browser. Video kamu sendiri
+   yang nyediain lewat field "videoUrl" -- bisa file lokal
+   (taruh di folder sejajar index.html, contoh "videos/ep1.mp4")
+   atau URL hosting video kamu sendiri.
+
+   Saat video di-pause/ditutup di tengah jalan, posisi detiknya
+   otomatis kesimpen ke localStorage. Buka lagi episode yang sama
+   -> otomatis lanjut dari situ (resume), bukan dari awal lagi.
+   ========================================================= */
+const playerPage = document.getElementById("playerPage");
+const playerBack = document.getElementById("playerBack");
+const playerTopTitle = document.getElementById("playerTopTitle");
+const playerVideoBox = document.getElementById("playerVideoBox");
+const playerEpTitle = document.getElementById("playerEpTitle");
+const playerEpMeta = document.getElementById("playerEpMeta");
+const playerPrevBtn = document.getElementById("playerPrevBtn");
+const playerNextBtn = document.getElementById("playerNextBtn");
+
+let playerItem = null;
+let playerSeason = null;
+let playerEpIndex = 0;
+let activeVideoEl = null;
+
+function saveCurrentPlayerProgress(){
+  if (!activeVideoEl || !playerItem || !playerSeason) return;
+  const episode = playerSeason.episodes[playerEpIndex];
+  if (!episode) return;
+  saveProgress(playerItem.title, playerSeason.label, episode.ep, activeVideoEl.currentTime, activeVideoEl.duration || 0);
+}
+
+function openPlayerPage(item, season, epIndex){
+  playerItem = item;
+  playerSeason = season;
+  playerEpIndex = epIndex;
+  renderPlayerEpisode();
+  playerPage.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function renderPlayerEpisode(){
+  const episode = playerSeason.episodes[playerEpIndex];
+  playerTopTitle.textContent = playerItem.title + " — " + playerSeason.label;
+  playerEpTitle.textContent = "Episode " + episode.ep + (episode.title ? " — " + episode.title : "");
+  playerEpMeta.textContent = episode.date || "";
+
+  playerVideoBox.innerHTML = "";
+  if (!episode.videoUrl) {
+    const placeholder = document.createElement("div");
+    placeholder.className = "player-video-placeholder";
+    placeholder.textContent = 'Episode ini belum punya "videoUrl". Isi field videoUrl di data episode ini buat muter videonya di sini.';
+    playerVideoBox.appendChild(placeholder);
+    activeVideoEl = null;
+  } else {
+    const video = document.createElement("video");
+    video.src = episode.videoUrl;
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    playerVideoBox.appendChild(video);
+    activeVideoEl = video;
+
+    const saved = getProgress(playerItem.title, playerSeason.label, episode.ep);
+    if (saved.time > 0 && !saved.watched) {
+      video.addEventListener("loadedmetadata", () => { video.currentTime = saved.time; }, { once: true });
+    }
+
+    // simpan progress berkala selagi nonton (tiap 5 detik) dan saat pause/ditutup
+    let saveTimer = setInterval(() => { if (!video.paused) saveCurrentPlayerProgress(); }, 5000);
+    video.addEventListener("pause", saveCurrentPlayerProgress);
+    video.addEventListener("ended", () => {
+      saveProgress(playerItem.title, playerSeason.label, episode.ep, video.duration, video.duration);
+    });
+    video._cleanupTimer = saveTimer;
+  }
+
+  playerPrevBtn.disabled = playerEpIndex <= 0;
+  playerNextBtn.disabled = playerEpIndex >= playerSeason.episodes.length - 1;
+}
+
+function closePlayerPage(){
+  saveCurrentPlayerProgress();
+  if (activeVideoEl) {
+    if (activeVideoEl._cleanupTimer) clearInterval(activeVideoEl._cleanupTimer);
+    activeVideoEl.pause();
+  }
+  playerPage.classList.remove("open");
+  document.body.style.overflow = "";
+  // refresh tampilan list biar progress bar/centang kebaru
+  if (currentItem) renderEpisodePreview(currentItem, currentSeasonIndex);
+  if (episodePage.classList.contains("open") && currentSeasons[currentSeasonIndex]) {
+    openEpisodePage();
+  }
+}
+playerBack.addEventListener("click", closePlayerPage);
+
+function switchPlayerEpisode(newIndex){
+  saveCurrentPlayerProgress();
+  if (activeVideoEl && activeVideoEl._cleanupTimer) clearInterval(activeVideoEl._cleanupTimer);
+  playerEpIndex = newIndex;
+  renderPlayerEpisode();
+}
+playerPrevBtn.addEventListener("click", () => { if (playerEpIndex > 0) switchPlayerEpisode(playerEpIndex - 1); });
+playerNextBtn.addEventListener("click", () => { if (playerEpIndex < playerSeason.episodes.length - 1) switchPlayerEpisode(playerEpIndex + 1); });
+
+// simpan progress kalau user nutup tab/refresh pas lagi nonton
+window.addEventListener("beforeunload", saveCurrentPlayerProgress);
+
+/* horizontal row scroll buttons */
+/* =========================================================
+   HERO BANNER — pakai HERO_PICKS (lihat bagian DATA di atas)
+   buat nentuin judul mana yang nongol di carousel atas, tapi
+   semua gambar/genre/sinopsis ditarik dari "poster" + field
+   lain di DATA (gak pakai "banner" sama sekali lagi).
+   ========================================================= */
+const heroItems = HERO_PICKS;
+
+function findItemByTitle(title){
+  return DATA.donghua.find(i => i.title === title) || DATA.anime.find(i => i.title === title) || null;
+}
+
+const ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>';
+const ICON_INFO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="11"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+
+const slidesEl = document.getElementById("slides");
+const dotsEl = document.getElementById("heroDots");
+let current = 0;
+
+heroItems.forEach((pick, idx) => {
+  // pick = entri ringkas dari HERO_PICKS ({cat, title}); detailnya
+  // (poster/genre/sinopsis/eps/season) diambil dari DATA biar gak dobel data.
+  const full = findItemByTitle(pick.title) || {};
+  const item = { ...full, ...pick }; // pick boleh override eps/season kalau diisi manual
+  const cat = pick.cat;
+
+  const slide = document.createElement("div");
+  slide.className = "slide";
+
+  // ---- background: dibangun dari POSTER (portrait), di-cover + di-zoom
+  // + diblur dikit, biar tetep penuh & sinematik walau sumbernya potret.
+  const bg = document.createElement("div");
+  bg.className = "hero-bg";
+  if (item.poster) {
+    bg.style.backgroundImage = `url(${item.poster})`;
+  } else {
+    slide.classList.add("pg-" + (hashTitle(item.title || pick.title) % 6));
+  }
+  slide.appendChild(bg);
+
+  const overlay = document.createElement("div");
+  overlay.className = "hero-overlay";
+  slide.appendChild(overlay);
+
+  // ---- konten: info di kiri, poster card di kanan ----
+  const contentWrap = document.createElement("div");
+  contentWrap.className = "hero-content";
+
+  const info = document.createElement("div");
+  info.className = "hero-info";
+
+  const kicker = document.createElement("span");
+  kicker.className = "kicker " + (cat === "anime" ? "k-anime" : "k-donghua");
+  kicker.textContent = cat === "anime" ? "ANIME" : "DONGHUA";
+  info.appendChild(kicker);
+
+  const title = document.createElement("div");
+  title.className = "slide-title";
+  title.textContent = item.title;
+  info.appendChild(title);
+
+  const meta = document.createElement("div");
+  meta.className = "slide-meta";
+  const badge = document.createElement("span");
+  badge.className = "ep-badge" + (item.eps === "END" ? " end" : "");
+  badge.innerHTML = '<span class="dot"></span>' + epLabel(item);
+  meta.appendChild(badge);
+  info.appendChild(meta);
+
+  if (item.genres && item.genres.length) {
+    const genreWrap = document.createElement("div");
+    genreWrap.className = "hero-genres";
+    item.genres.slice(0, 4).forEach(g => {
+      const chip = document.createElement("span");
+      chip.className = "hero-genre-chip";
+      chip.textContent = g;
+      genreWrap.appendChild(chip);
+    });
+    info.appendChild(genreWrap);
+  }
+
+  const synopsis = document.createElement("p");
+  synopsis.className = "hero-synopsis";
+  synopsis.textContent = item.synopsis || "Sinopsis belum ditambahkan untuk judul ini.";
+  info.appendChild(synopsis);
+
+  const actions = document.createElement("div");
+  actions.className = "hero-actions";
+
+  const watchBtn = document.createElement("button");
+  watchBtn.className = "hero-btn primary";
+  watchBtn.innerHTML = ICON_PLAY + "Watch Now";
+  watchBtn.addEventListener("click", () => {
+    if (!full.title) return;
+    openDetail(full, cat);
+    const firstSeason = (full.seasons || [])[0];
+    if (firstSeason && firstSeason.episodes && firstSeason.episodes.length) {
+      openPlayerPage(full, firstSeason, 0);
+    }
+  });
+  actions.appendChild(watchBtn);
+
+  const detailBtn = document.createElement("button");
+  detailBtn.className = "hero-btn secondary";
+  detailBtn.innerHTML = ICON_INFO + "Detail";
+  detailBtn.addEventListener("click", () => { if (full.title) openDetail(full, cat); });
+  actions.appendChild(detailBtn);
+
+  info.appendChild(actions);
+  contentWrap.appendChild(info);
+
+  // ---- poster card di kanan (portrait asli, gak di-crop) ----
+  const posterWrap = document.createElement("div");
+  posterWrap.className = "hero-poster-wrap";
+  const posterCard = document.createElement("div");
+  posterCard.className = "hero-poster-card" + (item.poster ? "" : " pg-" + (hashTitle(item.title || pick.title) % 6));
+  if (item.poster) {
+    posterCard.style.backgroundImage = `url(${item.poster})`;
+  } else {
+    const glyph = document.createElement("div");
+    glyph.className = "detail-glyph";
+    glyph.textContent = (item.title || pick.title).split(" ").map(w => w[0]).join("").slice(0,3);
+    posterCard.appendChild(glyph);
+  }
+  posterCard.addEventListener("click", () => { if (full.title) openDetail(full, cat); });
+  posterWrap.appendChild(posterCard);
+  contentWrap.appendChild(posterWrap);
+
+  slide.appendChild(contentWrap);
+  slidesEl.appendChild(slide);
+
+  const dot = document.createElement("button");
+  dot.addEventListener("click", () => goTo(idx));
+  dotsEl.appendChild(dot);
+});
+
+function update(){
+  slidesEl.style.transform = `translateX(${-current * 100}%)`;
+  [...slidesEl.children].forEach((s, i) => s.classList.toggle("active", i === current));
+  [...dotsEl.children].forEach((d, i) => d.classList.toggle("active", i === current));
+}
+function goTo(i){
+  current = (i + heroItems.length) % heroItems.length;
+  update();
+  restartAutoplay();
+}
+function next(){ goTo(current + 1); }
+function prev(){ goTo(current - 1); }
+
+
+document.getElementById("heroNext").addEventListener("click", next);
+document.getElementById("heroPrev").addEventListener("click", prev);
+
+let autoplay = setInterval(next, 5000);
+function restartAutoplay(){
+  clearInterval(autoplay);
+  autoplay = setInterval(next, 5000);
+}
+
+/* swipe (touch + mouse drag) */
+const heroEl = document.getElementById("hero");
+let startX = 0, deltaX = 0, dragging = false;
+
+function dragStart(x){ dragging = true; startX = x; clearInterval(autoplay); }
+function dragMove(x){ if(!dragging) return; deltaX = x - startX; }
+function dragEnd(){
+  if(!dragging) return;
+  dragging = false;
+  if (deltaX < -60) next();
+  else if (deltaX > 60) prev();
+  else restartAutoplay();
+  deltaX = 0;
+}
+
+heroEl.addEventListener("touchstart", e => dragStart(e.touches[0].clientX));
+heroEl.addEventListener("touchmove", e => dragMove(e.touches[0].clientX));
+heroEl.addEventListener("touchend", dragEnd);
+
+heroEl.addEventListener("mousedown", e => dragStart(e.clientX));
+heroEl.addEventListener("mousemove", e => dragMove(e.clientX));
+heroEl.addEventListener("mouseup", dragEnd);
+heroEl.addEventListener("mouseleave", () => { if(dragging) dragEnd(); });
+
+update();
+</script>
+</body>
+</html>
